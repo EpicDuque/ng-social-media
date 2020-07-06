@@ -1,0 +1,7 @@
+<div class="pt-3">
+  <app-write-post *ngIf="true"></app-write-post>
+
+  <div *ngFor="let p of posts">
+    <app-post author={{p.author}} content={{p.content}}></app-post>
+  </div>
+</div>
