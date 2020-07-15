@@ -40,13 +40,19 @@ export class AuthService {
     const provider = new auth.GoogleAuthProvider();
     const credential = await this.afAuth.signInWithPopup(provider);
 
-    return this.updateUserData(credential.user);
+    var promise = this.updateUserData(credential.user);
+
+    return promise;
   }
 
-  async userEmailSignin(email: string, password: string) {
-    const provider = new auth.EmailAuthProvider();
-    const credential = await this.afAuth.signInWithEmailAndPassword(email, password);
+  createUserWithEmailAndPassword(email: string, password: string) {
+    return this.afAuth.createUserWithEmailAndPassword(email, password).catch(error => {
+      console.error(error.message);
+    })
+  }
 
+  userEmailSignin(email: string, password: string) {
+    return this.afAuth.signInWithEmailAndPassword(email, password);
   }
 
   async signOut() {
@@ -55,16 +61,20 @@ export class AuthService {
     return this.router.navigate(['/']);
   }
 
-  private updateUserData(user){
+  updateUserData(user){
     const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${user.uid}`);
 
     const data: User = {
       uid: user.uid,
-      email: user.email,
+      name: user.name? user.name : '',
       displayName: user.displayName,
-      photoURL: user.photoURL,
+      photoURL: user.photoURL? user.photoURL : '',
     }
 
     return userRef.set(data, { merge: true });
+  }
+
+  private checkUserData(uid){
+    const userRef: AngularFirestoreDocument<User> = this.afs.doc(`users/${uid}`);
   }
 }
