@@ -19,6 +19,7 @@ export class SignUpComponent implements OnInit {
   errors = {
     email: false,
     badSyntax: false,
+    passwordMatch: false,
   }
 
   signUpForm = this.fb.group({
@@ -35,6 +36,7 @@ export class SignUpComponent implements OnInit {
   get last() { return this.signUpForm.get('lastName'); }
   get email() { return this.signUpForm.get('email'); }
   get password() { return this.signUpForm.get('password'); }
+  get confirmPassword() { return this.signUpForm.get('confirmPassword'); }
   get displayName() { return this.signUpForm.get('displayName'); }
   
   submitted = false;
@@ -42,6 +44,9 @@ export class SignUpComponent implements OnInit {
   constructor(private auth: AuthService, private fb: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
+    this.confirmPassword.valueChanges.subscribe(pass => {
+      if(pass !== this.password.value) this.errors.passwordMatch = true; else this.errors.passwordMatch = false;
+    })
   }
 
   public onSubmit() {
@@ -105,6 +110,7 @@ export class SignUpComponent implements OnInit {
     this.errors = {
       email: false,
       badSyntax: false,
+      passwordMatch: false,
     }
   }
 }

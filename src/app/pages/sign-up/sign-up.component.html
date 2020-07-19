@@ -73,10 +73,15 @@
       <input type="password" class="form-control" id="inputPassword2" formControlName="confirmPassword" 
       required
       minlength="6">
+
+      <div *ngIf="errors.passwordMatch" class="text-danger">
+          Passwords must match.
+      </div>
+
     </div>
 
     <div class="d-flex align-items-center">
-      <button type="submit" class="btn btn-primary" [disabled]="!signUpForm.valid || this.submitted">
+      <button type="submit" class="btn btn-primary" [disabled]="!signUpForm.valid || this.submitted || this.errors.passwordMatch">
         <span class="spinner-grow spinner-grow-sm mx-2" role="status" aria-hidden="true"
           [hidden]="!this.submitted"></span>
         <span>{{!this.submitted ? "Sign Up Now" : "Working..."}}</span>
