@@ -3,9 +3,10 @@ import { AuthService } from '../../services/auth.service'
 import { FormControl, FormGroup, ValidatorFn, ValidationErrors } from '@angular/forms'
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
-import { last } from 'rxjs/operators';
+import { last, first } from 'rxjs/operators';
 
-import { User } from '../../services/user.model';
+import { User } from '../../models/user.model';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -14,6 +15,11 @@ import { User } from '../../services/user.model';
   styleUrls: ['./sign-up.component.css']
 })
 export class SignUpComponent implements OnInit {
+
+  errors = {
+    email: false,
+    badSyntax: false,
+  }
 
   signUpForm = this.fb.group({
     firstName: ['', Validators.required],
@@ -24,43 +30,81 @@ export class SignUpComponent implements OnInit {
     confirmPassword: ['', Validators.required],
   })
 
-  submitted = false;
-
+  
   get name() { return this.signUpForm.get('firstName'); }
   get last() { return this.signUpForm.get('lastName'); }
   get email() { return this.signUpForm.get('email'); }
+  get password() { return this.signUpForm.get('password'); }
+  get displayName() { return this.signUpForm.get('displayName'); }
+  
+  submitted = false;
 
-  constructor(private auth: AuthService, private fb: FormBuilder) { }
+  constructor(private auth: AuthService, private fb: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
   }
 
-
   public onSubmit() {
+    // Reset States
+    this.resetErrorFlags();
     this.submitted = true;
 
-    console.warn(this.signUpForm.value);
-    var { email, password, displayName, name, lastName } = this.signUpForm.value;
-
-    this.auth.createUserWithEmailAndPassword(email, password).then(cred => {
+    // Create new User and check if it exists in database
+    this.auth.createUserWithEmailAndPassword(this.email.value, this.password.value).then(cred => {
       if(cred){
-        console.log(`Email: ${cred.user.email}`);
-        
-        var user: User = {
-          uid: cred.user.uid,
-          name: name,
-          lastname: lastName,
-          displayName: displayName,
-        }
 
-        this.auth.updateUserData(user).then(() => {
-          console.log('User created successfully!')
-          this.submitted = false;
+        var obs = this.auth.getUserRef(cred.user).valueChanges().pipe(first());
+
+        obs.subscribe(doc => {
+          // User already Exists
+          if(doc){
+            console.error(`This user already exists in database!`);
+            this.submitted = false;
+            this.errors.email = true;
+            return;
+
+          } else {
+
+            console.log(`New User`)
+            console.log(`First Name: ${this.name.value}`)
+            console.log(`Last Name: ${this.last.value}`)
+            
+            // New User
+            var display = this.displayName.value;
+            if(this.displayName.value === '' || this.displayName.value === null){
+              display = `${this.name.value} ${this.last.value}`
+            }
+            console.log(`Display Name: ${display}`)
+
+            var user: User = {
+              uid: cred.user.uid,
+              name: this.name.value,
+              lastname: this.last.value,
+              displayName: display,
+            }
+
+            // Update user data
+            this.auth.updateUserData(user).then(() => {
+              console.log('User created successfully!')
+              this.submitted = false;
+            })
+
+          }
+
         })
       }
-      
+    }).catch(error => {
+      console.error(error.message);
+      this.submitted = false;
+      this.errors.email = true;
     })
+
   }
 
-  
+  public resetErrorFlags() {
+    this.errors = {
+      email: false,
+      badSyntax: false,
+    }
+  }
 }

@@ -1,21 +1,28 @@
 <div class="bg-light rounded-lg w-50 mx-auto mt-5 shadow p-3">
   <h1 class="text-center">Log In to Social Media App!</h1>
   
-  <form (ngSubmit)="null" [formGroup]="loginForm">
+  <form (ngSubmit)="this.signIn()" [formGroup]="loginForm">
     <div class="form-group">
       <label>Email Address</label>
-      <input type="email" class="form-control" id="inputEmail">
+      <input type="email" class="form-control" id="inputEmail" formControlName="email" required>
     </div>
 
     <div class="form-group">
       <label>Password</label>
-      <input type="password" class="form-control" id="inputPassword">
+      <input type="password" class="form-control" id="inputPassword" formControlName="password" required>
     </div>
 
-    <button type="submit" class="btn btn-primary">Log In</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid || this.submitted">
+      <span class="spinner-grow spinner-grow-sm mx-2" role="status" aria-hidden="true"
+        [hidden]="!this.submitted"></span>
+      <span>{{!this.submitted ? "Login" : "Working..."}}</span>
+    </button>
   </form>
-
 </div>
+
+<!-- Auth Error -->
+<app-alert *ngIf="this.errors.authFailed" [strong]="'Auth Error:'" [message]="'Authentication failed.'" [type]="'danger'">
+</app-alert>
 
 <div class="d-flex align-items-center justify-content-around mt-5 w-50 mx-auto">
   <button class="shadow-sm btn btn-danger" (click)="this.googleSignin()">

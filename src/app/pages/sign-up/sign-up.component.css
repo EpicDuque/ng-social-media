@@ -2,11 +2,6 @@ label {
   font-size: medium;
 }
 
-.alert {
-  padding: 4px;
-
-}
-
 .ng-valid[required], .ng-valid.required  {
   border-left: 5px solid #42A948;
 }

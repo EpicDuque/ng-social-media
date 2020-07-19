@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Post } from '../../services/post.model';
+import { Observable, of } from 'rxjs';
+import { Post } from '../../models/post.model';
+import { AuthService } from 'src/app/services/auth.service';
+import { take } from 'rxjs/operators';
+import { PostService } from 'src/app/services/post.service';
 
 @Component({
   selector: 'app-pageposts',
@@ -9,22 +12,41 @@ import { Post } from '../../services/post.model';
 })
 export class PagePostsComponent implements OnInit {
 
-  posts$: Observable<Post>;
-  posts: Post[] = [
-    {
-      author: 'Pedro Duquesne',
-      content: 'This is my first Post!'
-    },
-    {
-      author: 'Wilson Lozano',
-      content: 'Peter encontre un bug.'
-    },
-    
-  ]
+  posts = [];
+  postsQuery: firebase.firestore.Query<firebase.firestore.DocumentData>;
 
-  constructor() { }
+  submitted = false;
+
+  constructor(private auth: AuthService, private ps: PostService) { }
 
   ngOnInit(): void {
+    
+    this.postsQuery = this.ps.getPosts(5, 'time');
+
+    this.postsQuery.onSnapshot(snap => {
+      this.posts = [];
+
+      if(snap.docs.length > 0){
+
+        snap.docs.forEach(doc => {
+          this.posts.push(doc.data());
+        })
+      }
+    })
+
   }
 
+  onSubmitPost(content: string) {
+
+    var post: Post = {
+      content: content,
+      author: this.auth.displayName,
+      time: Date.now(),
+      likes: 0,
+    }
+
+    this.ps.sendPost(post).then(doc => {
+      console.log(`Post sent succesfully! Doc ID: ${doc.id}`);
+    });
+  }
 }

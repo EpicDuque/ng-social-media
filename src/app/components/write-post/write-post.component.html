@@ -11,13 +11,13 @@
     </p>
     <mat-form-field class="w-100">
       <mat-label>Write your post here...</mat-label>
-      <textarea matInput placeholder="Hello World!"></textarea>
+      <textarea matInput [(ngModel)]="this.content"></textarea>
     </mat-form-field>
 
   </mat-card-content>
 
   <mat-card-actions>
-    <button mat-flat-button color="primary">POST</button>
+    <button mat-flat-button color="primary" [disabled]="this.submitted" (click)="makePost()">POST</button>
   </mat-card-actions>
 </mat-card>
 

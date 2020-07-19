@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { EventEmitter } from 'protractor';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'app-write-post',
@@ -8,17 +7,24 @@ import { EventEmitter } from 'protractor';
 })
 export class WritePostComponent implements OnInit {
 
-  emmiter: EventEmitter;
-
-  content: String;
   
+  content: string;
+  
+  @Output() emmiter = new EventEmitter<string>();
+
+  @Input()
+  submitted = false;
+
   constructor() { }
 
   ngOnInit(): void {
+    
   }
 
   makePost(){
-
+    this.emmiter.emit(this.content);
+    this.content = '';
+    // this.submitted = true;
   }
 
 }

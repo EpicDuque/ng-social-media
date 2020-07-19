@@ -1,3 +1,4 @@
+<hr />
 <div class="bg-light rounded-lg w-50 mx-auto mt-5 shadow p-3">
 
   <h1 class="text-center mb-5">Sign Up to Social Media</h1>
@@ -55,24 +56,39 @@
 
     <div class="form-group">
       <label>Password</label>
-      <input type="password" class="form-control" id="inputPassword" formControlName="password" required minlength="6">
+      <input type="password" class="form-control" id="inputPassword" formControlName="password" 
+      required 
+      minlength="6">
+
+      <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-danger">
+        <div *ngIf="password.errors.required">
+          A valid Password is required.
+        </div>
+      </div>
+
     </div>
 
     <div class="form-group">
       <label>Confirm Password</label>
-      <input type="password" class="form-control" id="inputPassword2" formControlName="confirmPassword" required
-        minlength="6">
+      <input type="password" class="form-control" id="inputPassword2" formControlName="confirmPassword" 
+      required
+      minlength="6">
     </div>
 
     <div class="d-flex align-items-center">
       <button type="submit" class="btn btn-primary" [disabled]="!signUpForm.valid || this.submitted">
-        <span class="spinner-grow spinner-grow-sm mx-2" role="status" aria-hidden="true" [hidden]="!this.submitted"></span>
+        <span class="spinner-grow spinner-grow-sm mx-2" role="status" aria-hidden="true"
+          [hidden]="!this.submitted"></span>
         <span>{{!this.submitted ? "Sign Up Now" : "Working..."}}</span>
       </button>
 
     </div>
-
   </form>
-      
 
 </div>
+
+<!-- Error Email -->
+<app-alert *ngIf="this.errors.email" [message]="'Email address already in use'" [type]="'danger'">
+</app-alert>
+
+<hr />
