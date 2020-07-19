@@ -3,4 +3,5 @@ export interface Post {
   content: string;
   time: number;
   likes: number;
+  likeUids?: string[],
 }

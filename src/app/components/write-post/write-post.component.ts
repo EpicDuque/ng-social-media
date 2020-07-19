@@ -12,8 +12,7 @@ export class WritePostComponent implements OnInit {
   
   @Output() emmiter = new EventEmitter<string>();
 
-  @Input()
-  submitted = false;
+  @Input() submitted = false;
 
   constructor() { }
 
@@ -24,7 +23,7 @@ export class WritePostComponent implements OnInit {
   makePost(){
     this.emmiter.emit(this.content);
     this.content = '';
-    // this.submitted = true;
+    //this.submitted = true;
   }
 
 }

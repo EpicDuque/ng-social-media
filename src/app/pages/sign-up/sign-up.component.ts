@@ -16,12 +16,15 @@ import { Router } from '@angular/router';
 })
 export class SignUpComponent implements OnInit {
 
+  // Custom errors
   errors = {
     email: false,
     badSyntax: false,
     passwordMatch: false,
   }
 
+  // Form Builder
+  passregex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/
   signUpForm = this.fb.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
@@ -31,7 +34,7 @@ export class SignUpComponent implements OnInit {
     confirmPassword: ['', Validators.required],
   })
 
-  
+  // Custom form getters
   get name() { return this.signUpForm.get('firstName'); }
   get last() { return this.signUpForm.get('lastName'); }
   get email() { return this.signUpForm.get('email'); }
@@ -45,7 +48,11 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {
     this.confirmPassword.valueChanges.subscribe(pass => {
-      if(pass !== this.password.value) this.errors.passwordMatch = true; else this.errors.passwordMatch = false;
+      if(pass !== this.password.value) 
+        this.errors.passwordMatch = true; 
+      else 
+        this.errors.passwordMatch = false;
+
     })
   }
 

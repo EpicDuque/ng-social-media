@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Post } from '../../models/post.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -20,8 +20,7 @@ export class PagePostsComponent implements OnInit {
   constructor(private auth: AuthService, private ps: PostService) { }
 
   ngOnInit(): void {
-    
-    this.postsQuery = this.ps.getPosts(5, 'time');
+    this.postsQuery = this.ps.getPosts(10, 'time');
 
     this.postsQuery.onSnapshot(snap => {
       this.posts = [];
@@ -29,7 +28,7 @@ export class PagePostsComponent implements OnInit {
       if(snap.docs.length > 0){
 
         snap.docs.forEach(doc => {
-          this.posts.push(doc.data());
+          this.posts.push({data: doc.data(), id: doc.id});
         })
       }
     })
@@ -37,6 +36,7 @@ export class PagePostsComponent implements OnInit {
   }
 
   onSubmitPost(content: string) {
+    this.submitted = true;
 
     var post: Post = {
       content: content,
@@ -47,6 +47,8 @@ export class PagePostsComponent implements OnInit {
 
     this.ps.sendPost(post).then(doc => {
       console.log(`Post sent succesfully! Doc ID: ${doc.id}`);
+      this.submitted = false;
     });
+    
   }
 }

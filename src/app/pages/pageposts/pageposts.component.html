@@ -2,6 +2,6 @@
   <app-write-post *ngIf="true" (emmiter)="onSubmitPost($event)" [submitted]="submitted"></app-write-post>
   <hr />
   <div *ngFor="let p of posts">
-    <app-post author={{p.author}} content={{p.content}}></app-post>
+    <app-post [post]="p.data" [postid]="p.id"></app-post>
   </div>
 </div>

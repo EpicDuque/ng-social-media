@@ -21,6 +21,7 @@ export class AuthService {
   user$: Observable<User>;
   
   public displayName: string = '';
+  public uid: string = '';
 
   loggedIn: boolean = false;
   redirectUrl: string;
@@ -43,7 +44,8 @@ export class AuthService {
             } else {
               this.displayName = user.displayName;
             }
-            
+
+            this.uid = user.uid;
             obs.subscribe();
           })
 
@@ -54,6 +56,7 @@ export class AuthService {
         } else {
           this.loggedIn = false;
           this.displayName = null;
+          this.uid = '';
 
           return of(null);
         }

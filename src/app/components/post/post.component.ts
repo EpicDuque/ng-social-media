@@ -1,6 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Post } from 'src/app/models/post.model';
+import { PostService } from 'src/app/services/post.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-post',
@@ -9,17 +12,29 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class PostComponent implements OnInit {
 
-  @Input()
-  author: string;
+  @Output() emmiter = new EventEmitter<string>();
+  @Input() postid: string;
+  @Input() post: Post;
 
-  @Input()
-  content: string;
+  liked = false;
 
-  constructor() { 
+  constructor(private ps: PostService, private auth: AuthService) { 
 
   }
 
   ngOnInit(): void {
+    // console.log(`Post ID: ${this.postid}`)
+    if(this.post.likeUids && this.post.likeUids.includes(this.auth.uid)){
+      this.liked = true;
+    }
   }
 
+  onLike() {
+    this.liked = true;
+    
+    this.emmiter.emit(this.postid);
+    this.ps.likePost(this.postid).subscribe(post => {
+      console.log(`Post successfuly liked!`);
+    });
+  }
 }
