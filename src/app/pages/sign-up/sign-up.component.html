@@ -1,5 +1,5 @@
 <hr />
-<div class="bg-light rounded-lg w-50 mx-auto mt-5 shadow p-3">
+<div class="bg-light rounded-lg mx-auto mt-5 shadow p-3" style="max-width: 35rem;">
 
   <h1 class="text-center mb-5">Sign Up to Social Media</h1>
 
@@ -81,7 +81,7 @@
     </div>
 
     <div class="d-flex align-items-center">
-      <button type="submit" class="btn btn-primary" [disabled]="!signUpForm.valid || this.submitted || this.errors.passwordMatch">
+      <button type="submit" class="btn btn-primary d-block mx-auto w-50 p-3" [disabled]="!signUpForm.valid || this.submitted || this.errors.passwordMatch">
         <span class="spinner-grow spinner-grow-sm mx-2" role="status" aria-hidden="true"
           [hidden]="!this.submitted"></span>
         <span>{{!this.submitted ? "Sign Up Now" : "Working..."}}</span>
